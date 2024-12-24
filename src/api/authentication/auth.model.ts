@@ -21,6 +21,18 @@ export class Auth{
     @Column({type: "enum", enum: Genders, nullable: true})
     gender?: Genders
 
+    @Column({nullable: true})
+    profileIconUrl?: string
+
+    @Column({nullable: true})
+    password_reset_token?: string
+
+    @Column()
+    account_create_token!: string
+
+    @Column()
+    account_create_token_expires!: Date
+    
     @Column({default: false})
     isVerified!: boolean
 
@@ -32,6 +44,12 @@ export class Auth{
 
     @Column({nullable: true})
     terminated_at!: Date
+
+    @Column({nullable: true})
+    password_reset_token_expires_at?: Date
+
+    @Column({nullable: true})
+    password_changed_at?: Date
 
     @CreateDateColumn({name: "created_at"})
     created_at!: Date

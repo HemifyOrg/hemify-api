@@ -1,6 +1,9 @@
 import {hash} from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../../../env'
+import { CustomRequest } from '../interfaces/custom-request'
+import { Response, NextFunction } from 'express'
+import { errorResponse } from './responses'
 
 export const hashPassword = async (password: string): Promise<string> => {
     const hashedPassword = hash(password, 10)
@@ -23,4 +26,27 @@ export const generateRefreshToken = async (id: string): Promise<string> => {
 
    return token
 
+}
+
+
+export const verifyUserAccessToken = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const authHeaders = req.headers['authorization']
+    const token = authHeaders && authHeaders.split(" ")[1]
+
+    if (!token) return errorResponse(res, 401, `Unauthorized`)
+
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, token) => {
+        if (err) return errorResponse(res, 403, `Forbidden`)
+
+        const {id} = token as JwtPayload
+
+        req.user = {id}
+
+        next()
+    })
+}
+
+export const generateOTP = (): string => {
+    let otp = `${Math.floor(100000 + Math.random() * 900000)}`
+    return otp
 }

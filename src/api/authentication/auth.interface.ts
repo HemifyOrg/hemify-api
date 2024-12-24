@@ -17,11 +17,30 @@ export interface AuthInterface{
     gender?: Genders
 }
 
+export interface AuthCreateInterface extends AuthInterface{
+    account_create_token: string
+    account_create_token_expires: Date
+}
+
 
 export interface AuthLoginInterface{
     username: string
     password: string
 }
+
+export interface AuthChangePasswordInterface{
+    userId: string
+    existingPassword: string
+    newPassword: string
+}
+
+export interface AuthResetPasswordInterface{
+    new_password: string
+    reset_token: string
+}
+
+
+
 
 export interface AuthResponseData{
     user: IBasicUser
