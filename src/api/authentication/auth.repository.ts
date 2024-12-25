@@ -1,6 +1,6 @@
 import { appDataSource } from "../datasource";
 import { Auth } from "./auth.model";
-import { AuthChangePasswordInterface, AuthCreateInterface, AuthInterface } from "./auth.interface";
+import { AccountStatus, AuthChangePasswordInterface, AuthCreateInterface, AuthInterface } from "./auth.interface";
 import { hashPassword } from "../utils/common";
 
 export class AuthRepository{
@@ -58,6 +58,30 @@ export class AuthRepository{
         if (!user) throw new Error(`User with ID ${userId} not found`)
 
         user.password = await hashPassword(newPassword)
+
+        await this.authRepository.save(user)
+    }
+
+    public async suspendAccount(username: string): Promise<void>{
+        const user = await this.getByUsername(username)
+
+        if (!user) throw new Error(`User with that username does not exist`)
+
+        user.account_status = AccountStatus.SUSPENDED
+        const currentDate = new Date()
+        user.suspended_at = currentDate
+        user.suspended_until = new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000)
+
+        await this.authRepository.save(user)
+    }
+
+    public async terminateAccount(username: string): Promise<void>{
+        const user = await this.getByUsername(username)
+
+        if (!user) throw new Error(`User with that username does not exist`)
+
+        user.account_status = AccountStatus.TERMINATED
+        user.terminated_at = new Date()
 
         await this.authRepository.save(user)
     }

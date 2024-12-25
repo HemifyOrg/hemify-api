@@ -1,9 +1,10 @@
 import { AuthRepository } from "./auth.repository";
 import { ServiceResponse } from "../utils/responses";
-import { AuthChangePasswordInterface, AuthInterface, AuthLoginInterface, AuthResetPasswordInterface, AuthResponseData, getBasicUser } from "./auth.interface";
+import { AccountStatus, AuthChangePasswordInterface, AuthInterface, AuthLoginInterface, AuthResetPasswordInterface, AuthResponseData, getBasicUser } from "./auth.interface";
 import { compare } from "bcrypt";
 import { generateAccessToken, generateOTP, generateRefreshToken } from "../utils/common";
 import { ACCOUNT_CREATE_TOKEN_EXPIRY } from "../../../env";
+import { formatToUserFriendlyDate } from "../utils/common";
 
 
 
@@ -42,6 +43,15 @@ export class AuthService{
             const existingUser = await this.authRepository.getByUsername(username)
 
             if (!existingUser) return ServiceResponse.error(`This account does not exist.`)
+
+
+            if (existingUser.account_status === AccountStatus.SUSPENDED){
+                return ServiceResponse.error(`This account has been suspended until ${formatToUserFriendlyDate(existingUser.suspended_until)}`)
+            } 
+
+            if (existingUser.account_status === AccountStatus.TERMINATED){
+                return ServiceResponse.error(`This account has been permanently terminated and is no longer accessible.`)
+            }
 
             const validatePassword = await compare(password, existingUser.password)
 

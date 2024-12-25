@@ -43,6 +43,9 @@ export class Auth{
     suspended_at!: Date
 
     @Column({nullable: true})
+    suspended_until!: Date
+
+    @Column({nullable: true})
     terminated_at!: Date
 
     @Column({nullable: true})

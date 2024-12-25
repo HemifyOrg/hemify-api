@@ -4,6 +4,7 @@ import { CustomRequest } from "../interfaces/custom-request";
 import { NextFunction, Response } from "express";
 import { hashPassword } from "../utils/common";
 
+
 export class AdminController{
     private adminService = new AdminService()
 
@@ -23,6 +24,53 @@ export class AdminController{
             if (!success) return errorResponse(res, 400, message)
 
             return successResponse(res, 201, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+
+    login = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const {email_address, password} = req.body
+
+            const payload ={email_address, password}
+
+            const {success, message, data} = await this.adminService.login(payload)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+    suspendUserAccount = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+
+            const {username} = req.body
+            const {success, message, data} = await this.adminService.suspendUserAccount(username)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+    terminateUserAccount = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const {username} = req.body
+            const {success, message, data} = await this.adminService.terminateUserAccount(username)
+
+            if (!success) return errorResponse(res, 400, message)
+            
+            return successResponse(res, 200, message, data)
 
         }catch(error){
             next(error)
