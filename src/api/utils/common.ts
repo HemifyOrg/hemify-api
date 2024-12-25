@@ -4,6 +4,7 @@ import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../../../env'
 import { CustomRequest } from '../interfaces/custom-request'
 import { Response, NextFunction } from 'express'
 import { errorResponse } from './responses'
+import { AdminRepository } from '../admin/admin.repository'
 
 export const hashPassword = async (password: string): Promise<string> => {
     const hashedPassword = hash(password, 10)
@@ -45,6 +46,32 @@ export const verifyUserAccessToken = async (req: CustomRequest, res: Response, n
         next()
     })
 }
+
+export const verifyAdminAccessToken = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    const adminRepository = new AdminRepository()
+
+    const authHeaders = req.headers['authorization']
+    const token = authHeaders && authHeaders.split(" ")[1]
+
+    if (!token) return errorResponse(res, 401,'Unauthorized')
+
+    try{
+            const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as JwtPayload;
+            const { id } = decoded;
+    
+            const admin = await adminRepository.get(id);
+    
+            if (!admin) return errorResponse(res, 401, `You do not have access to this resource`);
+    
+            req.user = { id };
+    
+            next();
+        } catch (err) {
+            return errorResponse(res, 403, `Forbidden`);
+        } 
+}
+
+
 
 export const generateOTP = (): string => {
     let otp = `${Math.floor(100000 + Math.random() * 900000)}`
