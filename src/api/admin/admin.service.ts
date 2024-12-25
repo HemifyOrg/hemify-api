@@ -6,6 +6,7 @@ import { formatToUserFriendlyDate, generateAccessToken, generateRefreshToken } f
 import { AuthRepository } from "../authentication/auth.repository";
 import { AccountStatus } from "../authentication/auth.interface";
 
+
 export class AdminService{
     private adminRepository = new AdminRepository()
     private authRepository = new AuthRepository()
@@ -83,6 +84,25 @@ export class AdminService{
             return ServiceResponse.error(error.message)
         }
     }
+
+    public async hemifyStats(){
+        try{
+            const userCount = await this.authRepository.getUsersCount()
+
+            const auth_data = {
+                all_users_count: userCount.allUsersCount,
+                active_users_count: userCount.activeUsersCount,
+                suspended_users_count: userCount.suspendedUsersCount,
+                terminated_users_count: userCount.terminatedUsersCount
+            }
+
+            return ServiceResponse.success(`Successfully returned Hemify Stats`, {auth_data})
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    
 
 
 

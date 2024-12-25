@@ -85,4 +85,22 @@ export class AuthRepository{
 
         await this.authRepository.save(user)
     }
+
+    public async getUsersCount(){
+        const allUsersCount = await this.authRepository.count()
+        const activeUsersCount = await this.authRepository.count({
+            where: {account_status: AccountStatus.ACTIVE}
+        })
+        const terminatedUsersCount = await this.authRepository.count({
+            where: {account_status: AccountStatus.TERMINATED}
+        })
+        const suspendedUsersCount = await this.authRepository.count({
+            where: {account_status: AccountStatus.SUSPENDED}
+        })
+
+        const userCount = {allUsersCount, activeUsersCount, suspendedUsersCount, terminatedUsersCount}
+
+        return userCount
+         
+    }
 }
