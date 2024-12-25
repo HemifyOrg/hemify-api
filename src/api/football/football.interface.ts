@@ -14,6 +14,7 @@ export interface FootballEventCreateInterface{
     tournament_name: string
     tournament_icon_url: string
     fixture_id: string
+    fixture_venue?: string
     home_team: string
     home_team_id: string
     home_team_icon_url: string
@@ -24,7 +25,14 @@ export interface FootballEventCreateInterface{
 
 }
 
-interface IBasicFootballEvent{
+export interface ManualFootballEventCreateInterface{
+    today: string
+    nextWeek: string
+    league: number
+    season: string
+}
+
+export interface IBasicFootballEvent{
     tournament_name: string
     tournament_icon_url: string
     home_team: string

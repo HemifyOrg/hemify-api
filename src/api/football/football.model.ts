@@ -16,7 +16,7 @@ export class FootballEvent{
     @Column()
     tournament_icon_url!: string
 
-    @Column() // a pointer to Rapid-API fixture
+    @Column({unique: true}) // a pointer to Rapid-API fixture
     fixture_id!: string
 
     @Column({nullable: true})

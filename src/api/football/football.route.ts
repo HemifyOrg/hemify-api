@@ -12,7 +12,12 @@ export class FootballRoute{
     }
 
     initRoutes(){
+        this.router.post('/events/football/auto-create', this.footballController.autoCreate) // reserved for the cron-job
+        this.router.get('/events/football/headtohead', verifyUserAccessToken, this.footballController.headtohead)
+        this.router.get('/events/football/timezones', verifyUserAccessToken, this.footballController.getTimezones)
         this.router.get('/events/football/:id', verifyUserAccessToken, this.footballController.get)
+        
+        
     }
 
 }
