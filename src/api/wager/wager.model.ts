@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, ManyToMany, JoinTable } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToMany, JoinTable, ManyToOne } from "typeorm";
 import { EVENT_TYPE, WAGER_STATUS, WagerTermInterface } from "./wager.interface";
 import { Auth } from "../authentication/auth.model";
 
@@ -22,7 +22,7 @@ export class Wager{
     @Column({type: "enum", enum: WAGER_STATUS, default: WAGER_STATUS.OPEN})
     wager_status!: WAGER_STATUS
 
-    @OneToOne(() => Auth)
+    @ManyToOne(() => Auth)
     @JoinColumn()
     initiator!: Auth
 

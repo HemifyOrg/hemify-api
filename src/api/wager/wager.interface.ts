@@ -39,22 +39,6 @@ export interface WagerTermInterface{
 }
 
 
-// export interface WagerCreateInterface{
-//     public_id: string
-//     event_type: EVENT_TYPE
-//     event_id: string
-//     wager_status: WAGER_STATUS
-//     initiator: Auth
-//     opponents?: Auth[]
-//     wager_terms: {
-//         amount_staked: number,
-//         potential_win: number,
-//         conditions: Array<WagerTermInterface>
-//     }
-
-//     wager_winner?: "initiator" | "opponent"
-// }
-
 export interface WagerCreateIO{
     public_id: string
     initiator: Auth

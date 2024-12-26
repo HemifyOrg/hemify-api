@@ -5,11 +5,13 @@ import { compare } from "bcrypt";
 import { formatToUserFriendlyDate, generateAccessToken, generateRefreshToken } from "../utils/common";
 import { AuthRepository } from "../authentication/auth.repository";
 import { AccountStatus } from "../authentication/auth.interface";
+import { WagerRepository } from "../wager/wager.repository";
 
 
 export class AdminService{
     private adminRepository = new AdminRepository()
     private authRepository = new AuthRepository()
+    private wagerRepository = new WagerRepository()
 
     public async create(payload: AdminCreateInterface){
         try{
@@ -88,6 +90,7 @@ export class AdminService{
     public async hemifyStats(){
         try{
             const userCount = await this.authRepository.getUsersCount()
+            const wagerCount = await this.wagerRepository.getWagersCount()
 
             const auth_data = {
                 all_users_count: userCount.allUsersCount,
@@ -96,7 +99,17 @@ export class AdminService{
                 terminated_users_count: userCount.terminatedUsersCount
             }
 
-            return ServiceResponse.success(`Successfully returned Hemify Stats`, {auth_data})
+            const wager_data = {
+                all_wagers_count: wagerCount.allWagersCount,
+                open_wagers_count: wagerCount.openWagersCount,
+                voided_wagers_count: wagerCount.voidedWagersCount,
+                matched_wagers_count: wagerCount.matchedWagersCount,
+                completed_wagers_count: wagerCount.completedWagersCount
+            }
+
+            
+
+            return ServiceResponse.success(`Successfully returned Hemify Stats`, {auth_data, wager_data})
         }catch(error: any){
             return ServiceResponse.error(error.message)
         }

@@ -13,12 +13,19 @@ export class WagerController{
     create = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{
             const userId = req.user?.id!
-            const wager_terms = req.body.wager_terms
+            const amount_staked = req.body.amount_staked
+            const conditions = req.body.conditions
             const event_type = req.body.event_type
             const event_id = req.body.event_id
 
             const initiator = await this.authRepostitory.get(userId)
             const public_id = await this.wagerService._ensureUniquePublicId()
+
+            const wager_terms = {
+                amount_staked,
+                potential_win: 2*amount_staked,
+                conditions
+            }
 
             
             const payload = {

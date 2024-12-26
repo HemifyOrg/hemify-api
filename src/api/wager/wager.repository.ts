@@ -1,6 +1,6 @@
 import { Auth } from "../authentication/auth.model";
 import { appDataSource } from "../datasource";
-import { WagerCreateIO } from "./wager.interface";
+import { WAGER_STATUS, WagerCreateIO } from "./wager.interface";
 import { Wager } from "./wager.model";
 
 
@@ -49,6 +49,29 @@ export class WagerRepository{
 
         await this.wagerRepository.save(wager)
         
+    }
+
+    public async getWagersCount(){
+        const allWagersCount = await this.wagerRepository.count()
+        const openWagersCount = await this.wagerRepository.count({
+            where: {wager_status: WAGER_STATUS.OPEN}
+        })
+
+        const matchedWagersCount = await this.wagerRepository.count({
+            where: {wager_status: WAGER_STATUS.MATCHED}
+        })
+
+        const voidedWagersCount = await this.wagerRepository.count({
+            where: {wager_status: WAGER_STATUS.VOID}
+        })
+
+        const completedWagersCount = await this.wagerRepository.count({
+            where: {wager_status: WAGER_STATUS.COMPLETED}
+        })
+
+        const wagerCount = {allWagersCount, openWagersCount, matchedWagersCount, voidedWagersCount, completedWagersCount}
+
+        return wagerCount
     }
 
     
