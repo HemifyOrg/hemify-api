@@ -17,5 +17,6 @@ export class AuthRoute{
         this.router.get('/auth', verifyUserAccessToken, this.authController.getDetails)
         this.router.post('/auth/change-password', verifyUserAccessToken, this.authController.changePassword)
         this.router.post('/auth/forgot-password', this.authController.forgotPassword)
+        this.router.get('/', this.authController.ok)
     }
 }
