@@ -99,3 +99,20 @@ export const formatToUserFriendlyDate = (date: Date) => {
 
     return response
 }
+
+export const generatePublicWagerId = () => {
+    const numbers = '0123456789'
+    const letters = 'abcdefghijklmnopqrstuvwxyz'
+
+    let code = ''
+    
+    for (let i = 0; i < 4; i++){
+        code += numbers[Math.floor(Math.random() * numbers.length)]
+    }
+
+    for (let i = 0; i < 5; i++){
+        code += letters[Math.floor(Math.random() * letters.length)]
+    }
+
+    return code
+}
