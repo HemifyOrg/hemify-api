@@ -80,6 +80,20 @@ export class WagerController{
         }
     }
 
+    getOpenWagers = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+
+            const {success, message, data} = await this.wagerService.getOpenWagers()
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
 
     wagerHistory = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{

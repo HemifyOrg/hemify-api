@@ -55,6 +55,19 @@ export class WagerService{
         }
     }
 
+    public async getOpenWagers(){
+        try{
+            const wagers = await this.wagerRepository.getOpenWagers()
+
+            const formatted = await Promise.all(wagers.map((wager: Wager) => getBasicWager(wager)))
+
+            return ServiceResponse.success(`Successfully returned wagers`, {wagers:formatted})
+
+        }catch(error:any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
     public async wagerHistory(user: Auth){
         try{
             const history = await this.wagerRepository.getWagersByUser(user)

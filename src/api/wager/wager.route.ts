@@ -13,8 +13,9 @@ export class WagerRoute{
 
     initRoutes(){
         this.router.post("/wagers/create", verifyUserAccessToken, this.wagerController.create)
-        this.router.get("/wagers", verifyUserAccessToken, this.wagerController.wagerHistory)
         this.router.post("/wagers/join/:id", verifyUserAccessToken, this.wagerController.join)
+        this.router.get("/wagers", verifyUserAccessToken, this.wagerController.wagerHistory)
+        this.router.get("/wagers/open", verifyUserAccessToken, this.wagerController.getOpenWagers)
         this.router.get("/wagers/:id", verifyUserAccessToken, this.wagerController.getWagerDetails)
     }
 }

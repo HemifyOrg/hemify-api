@@ -27,14 +27,16 @@ export class WagerRepository{
         return wager
     }
 
+    public async getOpenWagers(): Promise<Wager[]>{
+        const wagers = await this.wagerRepository.find({
+            where: {wager_status: WAGER_STATUS.OPEN},
+            relations: ['initiator', 'opponents']
+        })
 
-    // public async getWagersByUser(user: Auth): Promise<Wager[]>{
-    //     const wagers = await this.wagerRepository.find({
-    //         where: {initiator: user}
-    //     })
+        return wagers
 
-    //     return wagers
-    // }
+    }
+
 
     public async getWagersByUser(user: Auth): Promise<Wager[]> {
         const wagers = await this.wagerRepository
