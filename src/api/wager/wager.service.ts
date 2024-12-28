@@ -1,6 +1,6 @@
 import { WagerRepository } from "./wager.repository";
 import { ServiceResponse } from "../utils/responses";
-import { WAGER_STATUS, WagerCreateIO } from "./wager.interface";
+import { getBasicWager, WAGER_STATUS, WagerCreateIO } from "./wager.interface";
 import { generatePublicWagerId } from "../utils/common";
 import { Wager } from "./wager.model";
 import { Auth } from "../authentication/auth.model";
@@ -13,7 +13,7 @@ export class WagerService{
 
             const wager = await this.wagerRepository.create(payload)
 
-            return ServiceResponse.success(`Successfully created wager`, {wager})
+            return ServiceResponse.success(`Successfully created wager`, {})
 
         }catch(error: any){
             return ServiceResponse.error(error.message)
@@ -49,11 +49,25 @@ export class WagerService{
 
             const wager = await this.wagerRepository.get(id)
 
-            return ServiceResponse.success(`Successfully returned wager`, {wager})
+            return ServiceResponse.success(`Successfully returned wager`, {wager: getBasicWager(wager)})
         }catch(error: any){
             return ServiceResponse.error(error.message)
         }
     }
+
+    public async wagerHistory(user: Auth){
+        try{
+            const history = await this.wagerRepository.getWagersByUser(user)
+
+            const formatted = await Promise.all(history.map((wager: Wager) => getBasicWager(wager)))
+
+            return ServiceResponse.success(`Successfully returned wager history`, {history:formatted})
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+
 
     public async _ensureUniquePublicId(): Promise<string>{
         const maxAttempts = 10

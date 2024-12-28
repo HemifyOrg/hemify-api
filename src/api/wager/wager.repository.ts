@@ -16,14 +16,39 @@ export class WagerRepository{
         return newWager
     }
 
-    public async get(id: string): Promise<Wager|null>{
+    public async get(id: string): Promise<Wager>{
         const wager = await this.wagerRepository.findOne({
             where: {id},
             relations: ['initiator', 'opponents']
         })
 
+        if (!wager) throw new Error(`Wager with ID ${id} not found`)
+
         return wager
     }
+
+
+    // public async getWagersByUser(user: Auth): Promise<Wager[]>{
+    //     const wagers = await this.wagerRepository.find({
+    //         where: {initiator: user}
+    //     })
+
+    //     return wagers
+    // }
+
+    public async getWagersByUser(user: Auth): Promise<Wager[]> {
+        const wagers = await this.wagerRepository
+            .createQueryBuilder("wager")
+            .leftJoinAndSelect("wager.initiator", "initiator")
+            .leftJoinAndSelect("wager.opponents", "opponent")
+            .where("wager.initiatorId = :userId", { userId: user.id })
+            .orWhere("opponent.id = :userId", { userId: user.id })
+            .getMany();
+    
+        return wagers;
+    }
+
+
 
     public async getByPublicId(id: string): Promise<Wager|null>{
         const wager = await this.wagerRepository.findOne({
@@ -46,6 +71,7 @@ export class WagerRepository{
 
         // appending a new opponent to the wager.opponents array or initializing the array if it doesn’t exist
         wager.opponents = wager.opponents ? [...wager.opponents, opponent] : [opponent]
+        wager.wager_status = WAGER_STATUS.MATCHED
 
         await this.wagerRepository.save(wager)
         

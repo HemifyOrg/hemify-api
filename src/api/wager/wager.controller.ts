@@ -65,4 +65,35 @@ export class WagerController{
             next(error)
         }
     }
+
+    getWagerDetails = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const wagerId = req.params.id
+
+            const {success, message, data} = await this.wagerService.get(wagerId)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+        }catch(error){
+            next(error)
+        }
+    }
+
+
+    wagerHistory = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const userId = req.user?.id!
+            const user = await this.authRepostitory.get(userId)
+
+            const {success, message, data} = await this.wagerService.wagerHistory(user)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
 }

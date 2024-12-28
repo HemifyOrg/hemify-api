@@ -51,3 +51,38 @@ export interface WagerCreateIO{
     }
 }
 
+
+interface IBasicWager{
+    id: string
+    public_id: string
+    event_type: EVENT_TYPE
+    wager_status: WAGER_STATUS
+    wager_winner?: string
+    wager_terms: {
+        amount_staked: number,
+        potential_win: number,
+        conditions: Array<WagerTermInterface>
+    },
+    initiator: Auth,
+    opponents?: Auth[]
+    created_at: Date
+    updated_at: Date
+}
+
+
+export const getBasicWager = (wager: IBasicWager) => {
+    return {
+        id: wager.id,
+        public_id: wager.public_id,
+        event_type: wager.event_type,
+        wager_status: wager.wager_status,
+        wager_terms: wager.wager_terms,
+        initiator: wager.initiator.username,
+        opponents: wager.opponents?.map(opponent => opponent.username) || [],
+        wager_winner: wager.wager_winner,
+        created_at: wager.created_at,
+        updated_at: wager.updated_at
+    }
+
+}
+
