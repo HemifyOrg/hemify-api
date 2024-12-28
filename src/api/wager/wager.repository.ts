@@ -50,6 +50,15 @@ export class WagerRepository{
         return wagers;
     }
 
+    public async getByEventId(eventId: string): Promise<Wager[]>{
+        const wagers = await this.wagerRepository.find({
+            where: {event_id: eventId},
+            relations: ['initiator', 'opponents']
+        })
+
+        return wagers
+    }
+
 
 
     public async getByPublicId(id: string): Promise<Wager|null>{

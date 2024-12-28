@@ -1,6 +1,6 @@
 import { FootballEvent } from "./football.model";
 import { appDataSource } from "../datasource";
-import { FootballEventCreateInterface, FootballEventStatus } from "./football.interface";
+import { FootballEventCreateInterface, FootballEventStatus, FootballEventUpdateInterface } from "./football.interface";
 import { Between } from "typeorm";
 
 export class FootballEventRepository{
@@ -27,6 +27,21 @@ export class FootballEventRepository{
 
         return event
     }
+
+    public async update(id: string, updated: FootballEventUpdateInterface): Promise<void>{
+        const event = await this.footballRepository.findOne({
+            where: {id}
+        })
+
+        if (!event) throw new Error(`Event with ID ${id} not found`)
+
+        const updatedEvent = this.footballRepository.merge(event, updated)
+
+        await this.footballRepository.save(updatedEvent)
+    }
+
+
+
 
     public async getUpcoming(): Promise<FootballEvent[]>{
         const today = new Date()

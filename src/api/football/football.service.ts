@@ -1,6 +1,6 @@
 import { FootballEventRepository } from "./football.repository";
 import { ServiceResponse } from "../utils/responses";
-import { FootballEventCreateInterface, getBasicFootballEvent, ManualFootballEventCreateInterface } from "./football.interface";
+import { FootballEventCreateInterface, FootballEventStatus, FootballMatchWinner, getBasicFootballEvent, ManualFootballEventCreateInterface } from "./football.interface";
 import { trackedLeagues } from "../utils/secrets";
 import { FootballAPIService } from "./football.api";
 import { FootballEvent } from "./football.model";
@@ -99,6 +99,78 @@ export class FootballEventService{
             return ServiceResponse.error(error.message)
         }
     }
+
+
+    public async fetchFixtureInfo(fixtureId: string){
+
+        const {data} = await this.footballapiService.fetchFixtureInfo(fixtureId)
+        if (!data) return ServiceResponse.error(`Operation failed.`)
+        const update = await this._extractUpdatedInfo(data)
+
+        console.log(update)
+
+        return ServiceResponse.success(`Successfully fetched fixture info`, data)
+    }
+
+
+
+
+    public async autoUpdateLiveFootballEvents(){
+        try{
+            const footballEvents = await this.footballRepository.getLiveEvents()
+
+            for (let event of footballEvents){
+               const {data} = await this.footballapiService.fetchFixtureInfo(event.fixture_id)
+
+               if (!data) return ServiceResponse.error(`Operation failed.`)
+
+                const update = await this._extractUpdatedInfo(data)
+
+                await this.footballRepository.update(event.id, update)
+
+            }
+
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+
+    private async _extractUpdatedInfo(data: any){
+        const fte = data[0]
+
+        const status = fte.fixture.status.short
+        const home_team_goals = fte.goals.home || 0
+        const away_team_goals = fte.goals.away || 0
+        let event_status;
+        let match_winner;
+
+        if (['TBD', 'NS', 'PST', 'CANC', 'ABD', 'WO', 'AWD'].includes(status)) {
+            event_status = FootballEventStatus.PENDING;
+        } else if (['AET', 'FT', 'PEN'].includes(status)) {
+            event_status = FootballEventStatus.CONCLUDED;
+        } else {
+            event_status = FootballEventStatus.RUNNING
+        }
+
+        if (event_status === FootballEventStatus.CONCLUDED){
+            match_winner = fte.teams.home?.winner ? FootballMatchWinner.HOME : fte.teams.away?.winner ? FootballMatchWinner.AWAY : FootballMatchWinner.DRAW;
+        }
+
+
+        const response = {
+            home_team_goals,
+            away_team_goals,
+            event_status,
+            match_winner
+        }
+
+        return response
+
+
+    }
+
+
 
     private async _assembleTeamFormData(event: FootballEvent){
         const homeTeamId = Number(event.home_team_id)

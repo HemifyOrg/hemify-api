@@ -48,6 +48,20 @@ export class AdminController{
         }
     }
 
+    getUserInfo = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const {username} = req.body
+            const {success, message, data} = await this.adminService.getUserInfo(username)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
     suspendUserAccount = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{
 

@@ -89,6 +89,21 @@ export class FootballEventController{
     }
 
 
+    getFixtureDetails = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const fixtureId = req.body.fixture_id
+            const {success, message, data} = await this.footballService.fetchFixtureInfo(fixtureId)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+
 
 
 

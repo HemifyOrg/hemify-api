@@ -25,6 +25,15 @@ export interface FootballEventCreateInterface{
 
 }
 
+export interface FootballEventUpdateInterface{
+    home_team_goals: number
+    away_team_goals: number
+    event_status: FootballEventStatus
+    match_winner?: FootballMatchWinner
+}
+
+
+
 export interface ManualFootballEventCreateInterface{
     today: string
     nextWeek: string

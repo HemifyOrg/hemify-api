@@ -16,5 +16,6 @@ export class AdminRoute{
         this.router.post("/admin/suspend-user", verifyAdminAccessToken, this.adminController.suspendUserAccount)
         this.router.post("/admin/terminate-user", verifyAdminAccessToken, this.adminController.terminateUserAccount)
         this.router.get("/admin/stats", verifyAdminAccessToken, this.adminController.getHemifyStats)
+        this.router.get("/admin/user-info", verifyAdminAccessToken, this.adminController.getUserInfo)
     }
 }

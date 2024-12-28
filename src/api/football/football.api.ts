@@ -71,6 +71,28 @@ export class FootballAPIService{
     }
 
 
+    public async fetchFixtureInfo(fixtureId: string){
+        try{
+            const options = {
+                headers: {
+                    'x-rapidapi-key': RAPID_API_KEY,
+                    'x-rapidapi-host': 'api-football-v1.p.rapidapi.com',
+                },
+                params: {id: fixtureId, timezone: 'Africa/Lagos'}
+            }
+
+            const response = await axios.get(`https://api-football-v1.p.rapidapi.com/v3/fixtures`, options)
+            const data = response.data.response
+
+            return ServiceResponse.success(`Successfully fetched fixture information`, data)
+
+        }catch(error: any){
+            console.log(error)
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+
     public async fetchLeagueInfoById(id: number){
         try{
             const options = {

@@ -4,7 +4,7 @@ import { AdminAuthInterface, AdminAuthResponseData, AdminCreateInterface, getBas
 import { compare } from "bcrypt";
 import { formatToUserFriendlyDate, generateAccessToken, generateRefreshToken } from "../utils/common";
 import { AuthRepository } from "../authentication/auth.repository";
-import { AccountStatus } from "../authentication/auth.interface";
+import { AccountStatus, getBasicUser } from "../authentication/auth.interface";
 import { WagerRepository } from "../wager/wager.repository";
 
 
@@ -81,6 +81,19 @@ export class AdminService{
             await this.authRepository.terminateAccount(username)
 
             return ServiceResponse.success(`Successfully terminated user account`, {})
+
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    public async getUserInfo(username: string){
+        try{
+            const user = await this.authRepository.getByUsername(username)
+
+            if (!user) return ServiceResponse.error(`User with that username does not exist`)
+
+            return ServiceResponse.success(`Successfully fetched user details`, {user: getBasicUser(user)})
 
         }catch(error: any){
             return ServiceResponse.error(error.message)
