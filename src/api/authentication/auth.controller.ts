@@ -120,9 +120,5 @@ export class AuthController{
         }
     }
 
-    ok = async (req: CustomRequest, res: Response, next: NextFunction) => {
-        return successResponse(res, 200, `success`, {})
-    }
-
     
 }
