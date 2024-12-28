@@ -23,6 +23,33 @@ export class FootballEventService{
         }
     }
 
+    public async getUpcoming(){
+        try{
+
+            const events = await this.footballRepository.getUpcoming()
+
+            const formatted = await Promise.all(events.map((event) => getBasicFootballEvent(event)))
+
+            return ServiceResponse.success(`Successfully returned football events`, {events: formatted})
+
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    public async getRecent(){
+        try{
+            const events = await this.footballRepository.getRecent()
+
+            const formatted = await Promise.all(events.map((event) => getBasicFootballEvent(event)))
+
+            return ServiceResponse.success(`Successfully returned football events`, {events: formatted})
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+
+    }
+
     public async autoCreateFootballEvents(){
         try{
             const leageueIds = trackedLeagues

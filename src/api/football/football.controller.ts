@@ -62,6 +62,36 @@ export class FootballEventController{
         }
     }
 
+    getUpcoming = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const {success, message, data} = await this.footballService.getUpcoming()
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+    getRecent = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const {success, message, data} = await this.footballService.getRecent()
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
+
+
+
+
     headtohead = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{
             const home_team_id = req.body.home_team_id

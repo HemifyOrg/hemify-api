@@ -33,6 +33,7 @@ export interface ManualFootballEventCreateInterface{
 }
 
 export interface IBasicFootballEvent{
+    id: string
     tournament_name: string
     tournament_icon_url: string
     home_team: string
@@ -47,6 +48,7 @@ export interface IBasicFootballEvent{
 
 export const getBasicFootballEvent = (event: IBasicFootballEvent) => {
     return {
+        id: event.id,
         tournament_name: event.tournament_name,
         tournament_icon_url: event.tournament_icon_url,
         home_team: event.home_team,

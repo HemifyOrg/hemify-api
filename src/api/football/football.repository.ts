@@ -1,6 +1,7 @@
 import { FootballEvent } from "./football.model";
 import { appDataSource } from "../datasource";
 import { FootballEventCreateInterface, FootballEventStatus } from "./football.interface";
+import { Between } from "typeorm";
 
 export class FootballEventRepository{
     private footballRepository = appDataSource.getRepository(FootballEvent)
@@ -26,6 +27,49 @@ export class FootballEventRepository{
 
         return event
     }
+
+    public async getUpcoming(): Promise<FootballEvent[]>{
+        const today = new Date()
+
+        const startOfToday = new Date(today);
+        startOfToday.setHours(0, 0, 0, 0);
+        
+        const endOfNext7Days = new Date(today);
+        endOfNext7Days.setDate(today.getDate() + 7);
+        endOfNext7Days.setHours(23, 59, 59, 999);
+
+
+        const events = await this.footballRepository.find({
+            where: {
+                start_time: Between(startOfToday, endOfNext7Days)
+            }
+        })
+
+        return events
+    }
+
+    public async getRecent(): Promise<FootballEvent[]>{
+        const today = new Date()
+
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay())
+        startOfWeek.setHours(0, 0, 0, 0)
+
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6)
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        const events = await this.footballRepository.find({
+            where: {
+                start_time: Between(startOfWeek, endOfWeek)
+            }
+        })
+
+        return events
+    }
+
+
 
     public async getByFixtureId(id: string): Promise<FootballEvent|null>{
         const event = await this.footballRepository.findOne({
