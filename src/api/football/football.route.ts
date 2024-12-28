@@ -17,7 +17,6 @@ export class FootballRoute{
         this.router.get('/events/football/recent', verifyUserAccessToken, this.footballController.getRecent)
         this.router.get('/events/football/headtohead', verifyUserAccessToken, this.footballController.headtohead)
         this.router.get('/events/football/timezones', verifyUserAccessToken, this.footballController.getTimezones)
-        this.router.get("/events/football/getDetails", verifyUserAccessToken, this.footballController.getFixtureDetails)
         this.router.get('/events/football/:id', verifyUserAccessToken, this.footballController.get)
        
         

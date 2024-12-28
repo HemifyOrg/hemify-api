@@ -17,5 +17,6 @@ export class AdminRoute{
         this.router.post("/admin/terminate-user", verifyAdminAccessToken, this.adminController.terminateUserAccount)
         this.router.get("/admin/stats", verifyAdminAccessToken, this.adminController.getHemifyStats)
         this.router.get("/admin/user-info", verifyAdminAccessToken, this.adminController.getUserInfo)
+        this.router.get("/admin/events/football/:eventId", verifyAdminAccessToken, this.adminController.getFootballInfo)
     }
 }

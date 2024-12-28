@@ -6,12 +6,14 @@ import { formatToUserFriendlyDate, generateAccessToken, generateRefreshToken } f
 import { AuthRepository } from "../authentication/auth.repository";
 import { AccountStatus, getBasicUser } from "../authentication/auth.interface";
 import { WagerRepository } from "../wager/wager.repository";
+import { FootballEventService } from "../football/football.service";
 
 
 export class AdminService{
     private adminRepository = new AdminRepository()
     private authRepository = new AuthRepository()
     private wagerRepository = new WagerRepository()
+    private footballService = new FootballEventService()
 
     public async create(payload: AdminCreateInterface){
         try{
@@ -94,6 +96,18 @@ export class AdminService{
             if (!user) return ServiceResponse.error(`User with that username does not exist`)
 
             return ServiceResponse.success(`Successfully fetched user details`, {user: getBasicUser(user)})
+
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    public async getFootballInfo(eventId: string){
+        try{
+            const {data:event} = await this.footballService.get(eventId)
+            const {data: latest} = await this.footballService.getFixtureInfo(event?.football_event.fixture_id!)
+
+            return ServiceResponse.success(`Successfully fetched football event`, {event, latest})
 
         }catch(error: any){
             return ServiceResponse.error(error.message)

@@ -101,15 +101,14 @@ export class FootballEventService{
     }
 
 
-    public async fetchFixtureInfo(fixtureId: string){
+    public async getFixtureInfo(fixtureId: string){
 
         const {data} = await this.footballapiService.fetchFixtureInfo(fixtureId)
         if (!data) return ServiceResponse.error(`Operation failed.`)
         const update = await this._extractUpdatedInfo(data)
 
-        console.log(update)
 
-        return ServiceResponse.success(`Successfully fetched fixture info`, data)
+        return ServiceResponse.success(`Successfully fetched fixture info`, update)
     }
 
 

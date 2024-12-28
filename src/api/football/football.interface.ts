@@ -45,6 +45,7 @@ export interface IBasicFootballEvent{
     id: string
     tournament_name: string
     tournament_icon_url: string
+    fixture_id: string
     home_team: string
     away_team: string 
     start_time: Date | null
@@ -53,6 +54,7 @@ export interface IBasicFootballEvent{
     away_team_icon_url: string
     home_team_goals: number | null
     away_team_goals: number | null
+    match_winner: string | null
 }
 
 export const getBasicFootballEvent = (event: IBasicFootballEvent) => {
@@ -60,6 +62,7 @@ export const getBasicFootballEvent = (event: IBasicFootballEvent) => {
         id: event.id,
         tournament_name: event.tournament_name,
         tournament_icon_url: event.tournament_icon_url,
+        fixture_id: event.fixture_id,
         home_team: event.home_team,
         away_team: event.away_team,
         start_time: event.start_time,
@@ -67,6 +70,7 @@ export const getBasicFootballEvent = (event: IBasicFootballEvent) => {
         home_team_icon_url: event.home_team_icon_url,
         away_team_icon_url: event.away_team_icon_url,
         home_team_goals: event.home_team_goals,
-        away_team_goals: event.away_team_goals
+        away_team_goals: event.away_team_goals,
+        match_winner: event.match_winner
     }
 }

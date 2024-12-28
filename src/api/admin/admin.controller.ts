@@ -48,6 +48,20 @@ export class AdminController{
         }
     }
 
+    getFootballInfo = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const eventId = req.params.eventId
+            const {success, message, data} = await this.adminService.getFootballInfo(eventId)
+
+            if (!success) return errorResponse(res, 400, message)
+
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
+    }
+
     getUserInfo = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{
             const {username} = req.body
