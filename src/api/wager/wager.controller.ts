@@ -3,12 +3,16 @@ import { Response, NextFunction } from "express";
 import { errorResponse, successResponse } from "../utils/responses";
 import { WagerService } from "./wager.service";
 import { AuthRepository } from "../authentication/auth.repository";
+import { FootballEventRepository } from "../football/football.repository";
+import { EVENT_TYPE } from "./wager.interface";
+import { FootballEventStatus } from "../football/football.interface";
 
 
 
 export class WagerController{
     private wagerService = new WagerService()
     private authRepostitory = new AuthRepository()
+    private footballRepository = new FootballEventRepository()
 
     create = async (req: CustomRequest, res: Response, next: NextFunction) => {
         try{
@@ -17,6 +21,16 @@ export class WagerController{
             const conditions = req.body.conditions
             const event_type = req.body.event_type
             const event_id = req.body.event_id
+
+            if (event_type === EVENT_TYPE.FOOTBALL){
+                const event = await this.footballRepository.get(event_id)
+
+                if (!event) return errorResponse(res, 400, `Cannot create a wager on an event that doesn't exist`)
+
+                if (event.event_status === FootballEventStatus.RUNNING || event.event_status === FootballEventStatus.CONCLUDED){
+                    return errorResponse(res, 400, `Cannot create wager on event that has began or concluded`)
+                }
+            }
 
             const initiator = await this.authRepostitory.get(userId)
             const public_id = await this.wagerService._ensureUniquePublicId()
