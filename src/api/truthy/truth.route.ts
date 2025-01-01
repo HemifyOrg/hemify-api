@@ -13,5 +13,6 @@ export class TruthRoute{
 
     initRoutes(){
         this.router.post("/truth/football/winner", verifyAdminAccessToken, this.truthController.footballWinner)
+        this.router.post("/truth/football/draw", verifyAdminAccessToken, this.truthController.footballDraw)
     }
 }

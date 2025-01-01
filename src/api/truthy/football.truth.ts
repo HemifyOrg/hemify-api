@@ -22,8 +22,6 @@ export class FootballTruthService{
 
             const {data} = await this.footballService.getFixtureInfo(fixtureId)
 
-            console.log(data)
-
             if (!data) return ServiceResponse.error(`Could not verify event info`)
             
             const matchWinner = data.match_winner
@@ -67,7 +65,56 @@ export class FootballTruthService{
 
 
         }catch(error: any){
-            console.error("Error deciding winner:", error);
+            console.error("Error deciding truth:", error);
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    public async decideFullTimeDraw(event: FootballEvent){
+        try{
+            const fixtureId = event.fixture_id
+            const {data} = await this.footballService.getFixtureInfo(fixtureId)
+
+            if (!data) return ServiceResponse.error(`Could not verify event info`)
+
+            console.log(data)
+
+            const matchWinner = data.match_winner
+
+            if (matchWinner !== FootballMatchWinner.DRAW) return ServiceResponse.error(`Cannot process full-time draw wagers for non-draw event`)
+
+
+            const {data: wagers} = await this.wagerService.getByEvent(event.id)
+
+            if (!wagers || wagers.length == 0) return ServiceResponse.error(`Wagers for this event does not exist`)
+
+            for (const wager of wagers){
+                const wagerConditions = wager.wager_terms.conditions
+                let wagerDrawDecision;
+
+                for (const condition of wagerConditions){
+                    if (condition.condition_type === WAGER_CONDITION_TYPES.FULL_TIME_DRAW){
+                        wagerDrawDecision = condition.value
+                        break
+                    }
+                }
+
+                if (!wagerDrawDecision) continue
+
+                
+                if (matchWinner === FootballMatchWinner.DRAW && wagerDrawDecision === WAGER_CONDITION_VALUES.YES){
+                    await this.wagerService.updateWithWinner(wager.id, "initiator")
+                }else{
+                    await this.wagerService.updateWithWinner(wager.id, "opponent")
+                }
+            }
+
+            return ServiceResponse.success(`Successfully decided wager winner`, {})
+
+
+
+        }catch(error: any){
+            console.error(`Error deciding truth:`, error)
             return ServiceResponse.error(error.message)
         }
     }

@@ -25,6 +25,22 @@ export class TruthController{
         }catch(error){
             next(error)
         }
+    }
 
+    footballDraw = async (req: CustomRequest, res: Response, next: NextFunction) => {
+        try{
+            const eventId = req.body.event_id
+
+            const footballEvent = await this.footballRepository.get(eventId)
+
+            const {success, message, data} = await this.footballtruthService.decideFullTimeDraw(footballEvent)
+
+            if (!success) return errorResponse(res, 400, message)
+            
+            return successResponse(res, 200, message, data)
+
+        }catch(error){
+            next(error)
+        }
     }
 }
