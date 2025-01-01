@@ -119,6 +119,53 @@ export class FootballTruthService{
         }
     }
 
+    public async decideBothTeamScores(event: FootballEvent){
+        try{
+            const fixtureId = event.fixture_id
+            const {data} = await this.footballService.getFixtureInfo(fixtureId)
+
+            if (!data) return ServiceResponse.error(`could not verify event info`)
+            
+            const home_goals = data.home_team_goals
+            const away_goals = data.away_team_goals
+
+            const matchTruth = (home_goals != 0 && away_goals != 0) ? WAGER_CONDITION_VALUES.YES: WAGER_CONDITION_VALUES.NO
+
+            const {data: wagers} = await this.wagerService.getByEvent(event.id)
+
+            if (!wagers || wagers.length == 0) return ServiceResponse.error(`Wagers for this event does not exist`)
+
+
+            for (const wager of wagers){
+                const wagerConditions = wager.wager_terms.conditions
+                let wagerDecision;
+
+                for (const condition of wagerConditions){
+                    if (condition.condition_type === WAGER_CONDITION_TYPES.BOTH_TEAM_SCORES){
+                        wagerDecision = condition.value
+                        break
+                    }
+                }
+
+                if (!wagerDecision) continue
+
+
+                if (matchTruth === wagerDecision){
+                    await this.wagerService.updateWithWinner(wager.id, "initiator")
+                }else{
+                    await this.wagerService.updateWithWinner(wager.id, "opponent")
+                }
+                
+            }
+
+            return ServiceResponse.success(`Successfully decided wager winner`, {})
+
+        }catch(error: any){
+            console.error(`Error deciding truth:`, error)
+            return ServiceResponse.error(error.message)
+        }
+    }
+
     
 }
 
