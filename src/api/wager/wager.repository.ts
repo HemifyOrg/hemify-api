@@ -69,6 +69,19 @@ export class WagerRepository{
         return wager
     }
 
+    public async updateWithWinner(id: string, winner: "initiator" | "opponent" | "n/a"): Promise<void>{
+        const wager = await this.wagerRepository.findOne({
+            where: {id}
+        })
+
+        if (!wager) throw new Error(`Wager with ID ${id} not found`)
+
+        wager.wager_winner = winner
+        wager.wager_status = winner === "n/a" ? WAGER_STATUS.VOID : WAGER_STATUS.COMPLETED;
+
+        await this.wagerRepository.save(wager)
+    }
+
     public async join(id: string, opponent: Auth){
         const wager = await this.wagerRepository.findOne({
             where: {id}

@@ -1,6 +1,6 @@
 import { WagerRepository } from "./wager.repository";
 import { ServiceResponse } from "../utils/responses";
-import { getBasicWager, WAGER_STATUS, WagerCreateIO } from "./wager.interface";
+import { EVENT_TYPE, getBasicWager, WAGER_STATUS, WagerCreateIO } from "./wager.interface";
 import { generatePublicWagerId } from "../utils/common";
 import { Wager } from "./wager.model";
 import { Auth } from "../authentication/auth.model";
@@ -42,8 +42,6 @@ export class WagerService{
     }
 
 
-
-
     public async get(id:string){
         try{
 
@@ -54,6 +52,20 @@ export class WagerService{
             return ServiceResponse.error(error.message)
         }
     }
+
+    public async updateWithWinner(id: string, winner: "initiator" | "opponent" | "n/a"){
+        try{
+
+            await this.wagerRepository.updateWithWinner(id, winner)
+
+            return ServiceResponse.success(`Successfully updated wager`, {})
+
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+
 
     public async getOpenWagers(){
         try{
@@ -75,6 +87,16 @@ export class WagerService{
             const formatted = await Promise.all(history.map((wager: Wager) => getBasicWager(wager)))
 
             return ServiceResponse.success(`Successfully returned wager history`, {history:formatted})
+        }catch(error: any){
+            return ServiceResponse.error(error.message)
+        }
+    }
+
+    public async getByEvent(eventId: string){
+        try{
+            const wagers = await this.wagerRepository.getByEventId(eventId)
+
+            return ServiceResponse.success(`Successfully returned wagers`, wagers)
         }catch(error: any){
             return ServiceResponse.error(error.message)
         }

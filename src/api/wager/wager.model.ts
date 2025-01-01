@@ -38,7 +38,7 @@ export class Wager{
     }
 
     @Column({nullable: true})
-    wager_winner?: "initiator" | "opponent"
+    wager_winner?: "initiator" | "opponent" | "n/a"
 
     @CreateDateColumn({name: "created_at"})
     created_at!: Date

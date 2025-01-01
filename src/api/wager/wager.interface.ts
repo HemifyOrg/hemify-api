@@ -17,15 +17,16 @@ export enum WAGER_STATUS{
     VOID = "void"
 }
 
-enum WAGER_CONDITION_TYPES {
+export enum WAGER_CONDITION_TYPES {
     WINNER = "winner",
     BOTH_TEAM_SCORES = "both_team_scores",
     FULL_TIME_DRAW = "full_time_draw"
 }
 
-enum WAGER_CONDITION_VALUES {
+export enum WAGER_CONDITION_VALUES {
     HOME = "home",
     AWAY = "away",
+    DRAW = "draw",
     YES = "yes",
     NO = "no",
     TEAM1 = "team1",
